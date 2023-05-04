@@ -3,6 +3,7 @@ import 'dotenv/config';
 import { port } from './config';
 import droneRouter from './routes/drone';
 import { initializeDatabase } from './database';
+import medicationRouter from './routes/medication';
 
 
 const app: Express=express()
@@ -14,6 +15,8 @@ app.get('/', (req, res) => {
 app.use(express.json())
 
 app.use("/drones",droneRouter);
+
+app.use("/medications",medicationRouter);
 
 app.use(
   (
