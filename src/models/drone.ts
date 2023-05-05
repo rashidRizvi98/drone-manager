@@ -19,7 +19,7 @@ export enum DroneStateEnum {
 
 export enum DroneModelEnum {
     LIGHTWEIGHT = 'LIGHTWEIGHT', 
-    MIDDLEWEIGHT = ' MIDDLEWEIGHT',
+    MIDDLEWEIGHT = 'MIDDLEWEIGHT',
     CRUISERWEIGHT = 'CRUISERWEIGHT',
     HEAVYWEIGHT = 'HEAVYWEIGHT'
 }
