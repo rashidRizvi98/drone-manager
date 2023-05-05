@@ -4,6 +4,7 @@ import { port } from './config';
 import droneRouter from './routes/drone';
 import { initializeDatabase } from './database';
 import medicationRouter from './routes/medication';
+import loadRouter from './routes/load';
 
 
 const app: Express=express()
@@ -17,6 +18,8 @@ app.use(express.json())
 app.use("/drones",droneRouter);
 
 app.use("/medications",medicationRouter);
+
+app.use("/load",loadRouter);
 
 app.use(
   (

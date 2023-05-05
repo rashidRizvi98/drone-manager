@@ -3,6 +3,7 @@ import { Drone } from "./models/drone";
 import { dbConfig } from "../config";
 import { createdb } from "pgtools";
 import { Medication } from "./models/medication";
+import { Load } from "./models/load";
 
 const connection = new Sequelize({
     username: dbConfig.username,
@@ -12,7 +13,7 @@ const connection = new Sequelize({
     dialect: "postgres",
     database: "drone-manager",
     logging: false,
-    models: [Drone,Medication]
+    models: [Drone,Medication,Load]
 })
 
 export const createDatabase = async (dbName: string) => {
