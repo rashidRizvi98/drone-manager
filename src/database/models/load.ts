@@ -23,14 +23,20 @@ export class Load extends Model<ILoad,ILoadAttributes>{
     @ForeignKey(() => Drone)
     @Column({
         type: DataType.UUID,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            isUUID: 4
+        }
     })
     droneId!: string;
 
     @ForeignKey(() => Medication)
     @Column({
         type: DataType.UUID,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            isUUID: 4
+        }
     })
     medicationId!: string;
 

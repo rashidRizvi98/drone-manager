@@ -12,3 +12,7 @@ export const getDroneWeight = (droneModel: DroneModelEnum) => {
             return 500;
     }
 }
+
+export const enumToArray = (enumm: any) => {
+    return Object.keys(enumm).map(key => enumm[key]);
+}

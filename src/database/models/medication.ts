@@ -20,7 +20,10 @@ export class Medication extends Model<IMedication,IMedicationributes>{
 
     @Column({
         type: DataType.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            is : /^[a-zA-Z0-9-_]+$/
+        }
     })
     name!: string;
 
@@ -32,7 +35,10 @@ export class Medication extends Model<IMedication,IMedicationributes>{
 
     @Column({
         type: DataType.STRING,
-        allowNull: false
+        allowNull: false,
+        validate: {
+            is : /^[A-Z0-9_]+$/
+        }
     })
     code!: string;
 
