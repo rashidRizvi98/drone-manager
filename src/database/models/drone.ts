@@ -1,6 +1,7 @@
-import { Model, Column, DataType, Table, PrimaryKey } from "sequelize-typescript";
+import { Model, Column, DataType, Table, PrimaryKey, HasMany } from "sequelize-typescript";
 import { DroneStateEnum, IDrone } from "../../models/drone";
 import { Optional } from "sequelize";
+import { Load } from "./load";
 
 interface IDroneAttributes extends Optional<IDrone,'id'> {}
 
@@ -48,5 +49,7 @@ export class Drone extends Model<IDrone,IDroneAttributes>{
     })
     state!: string;
 
+    @HasMany(() => Load)
+    loads!: Load[];
 
 }
