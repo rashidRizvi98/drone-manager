@@ -3,12 +3,13 @@ import { Drone } from "../database/models/drone";
 import { DroneStateEnum, IDrone } from "../models/drone";
 import { deliverLoad } from "../services/drone";
 import { Load } from "../database/models/load";
+import { getDroneWeight } from "../helpers/drone";
 
 export const registerDrone: RequestHandler = async (req,res,next) => {
     const payload : IDrone = req.body;
     const [registeredDrone ,created] = await Drone.findOrCreate({
         where: { serialNumber: payload.serialNumber },
-        defaults: {serialNumber: payload.serialNumber,battery: payload?.battery,weight:payload?.weight,model: payload?.model,state:payload?.state }
+        defaults: {serialNumber: payload.serialNumber,battery: payload?.battery,weight:getDroneWeight(payload?.model),model: payload?.model,state:payload?.state }
     });
 
     if (created) {
