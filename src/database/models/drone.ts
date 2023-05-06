@@ -7,7 +7,6 @@ import { enumToArray } from "../../helpers/helper";
 interface IDroneAttributes extends Optional<IDrone,'id'> {}
 
 @Table({
-    timestamps: false,
     tableName: "drones"
 })
 export class Drone extends Model<IDrone,IDroneAttributes>{
@@ -55,7 +54,7 @@ export class Drone extends Model<IDrone,IDroneAttributes>{
             max: 100
         }
     })
-    battery!: number;
+    batteryPercentage!: number;
 
     @Column({
         type: DataType.STRING,
@@ -66,6 +65,15 @@ export class Drone extends Model<IDrone,IDroneAttributes>{
         }
     })
     state!: string;
+
+    @Column({
+        type: DataType.FLOAT,
+        allowNull: false,
+        validate: {
+            min: 1
+        }
+    })
+    distanceToDestination!: number;
 
     @HasMany(() => Load)
     loads!: Load[];

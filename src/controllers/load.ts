@@ -21,7 +21,7 @@ export const loadMedication: RequestHandler = async (req,res,next) => {
         return next(new Error("Invalid medication code"));        
     }
 
-    if (drone?.battery! < 25) {
+    if (drone?.batteryPercentage! < 25) {
         return next(new Error("The battery level is lower than 25%, please recharge"));
     }
 

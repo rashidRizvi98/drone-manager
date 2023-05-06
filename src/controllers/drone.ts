@@ -14,7 +14,14 @@ export const registerDrone: RequestHandler = async (req,res,next) => {
     try {
         const [registeredDrone ,created] = await Drone.findOrCreate({
             where: { serialNumber: payload.serialNumber },
-            defaults: {serialNumber: payload.serialNumber,battery: payload?.battery,weight:getDroneWeight(payload?.model),model: payload?.model,state:payload?.state }
+            defaults: {
+                serialNumber: payload.serialNumber,
+                batteryPercentage: payload?.batteryPercentage,
+                weight:getDroneWeight(payload?.model),
+                model: payload?.model,
+                state:payload?.state,
+                distanceToDestination: payload.distanceToDestination
+            }
         });
     
         if (created) {
@@ -78,7 +85,7 @@ export const rechargeDrone: RequestHandler = async (req,res,next) => {
         return next(new Error("Invalid serial number"));   
     }
 
-    await drone.update({battery: 100},{where:{ serialNumber }})
+    await drone.update({batteryPercentage: 100},{where:{ serialNumber }})
     return res.status(200)
     .json({message: "Successfully Recharged"});
 }
@@ -93,7 +100,7 @@ export const checkBatteryPercentage: RequestHandler = async (req,res,next) => {
     }
 
     return res.status(200)
-    .json({data: `${drone.battery}%`});
+    .json({data: `${drone.batteryPercentage}%`});
 }
 
 export const getLoadedMedications: RequestHandler = async (req, res, next) => {
@@ -130,7 +137,7 @@ export const getLoadableDrones: RequestHandler = async (req,res,next) => {
     const drones = await Drone.findAll({
         include: Load,
         where: { state: { [Op.in] : [DroneStateEnum.IDLE,DroneStateEnum.LOADED]},
-        battery: { [Op.gte]: 25 }}});
+        batteryPercentage: { [Op.gte]: 25 }}});
 
     let dronesWithSpace = [];
     for (const drone of drones) {
