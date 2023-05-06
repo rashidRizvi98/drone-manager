@@ -3,7 +3,7 @@ import { Drone } from "../database/models/drone";
 import { DroneStateEnum, IDrone } from "../models/drone";
 import { deliverLoad } from "../services/drone";
 import { Load } from "../database/models/load";
-import { getDroneWeight } from "../helpers/helper";
+import { getDroneWeightLimit } from "../helpers/helper";
 import { Medication } from "../database/models/medication";
 import { getPreSignedUrl } from "../middlewares/file-upload";
 import { IMedication } from "../models/medication";
@@ -17,9 +17,9 @@ export const registerDrone: RequestHandler = async (req,res,next) => {
             defaults: {
                 serialNumber: payload.serialNumber,
                 batteryPercentage: payload?.batteryPercentage,
-                weight:getDroneWeight(payload?.model),
+                weightLimit: getDroneWeightLimit(payload?.model),
                 model: payload?.model,
-                state:payload?.state,
+                state: payload?.state,
                 distanceToDestination: payload.distanceToDestination
             }
         });
@@ -148,7 +148,7 @@ export const getLoadableDrones: RequestHandler = async (req,res,next) => {
             
         }));
 
-        if (weightInDrone != drone.weight) {
+        if (weightInDrone != drone.weightLimit) {
                 dronesWithSpace.push(drone);
         }            
     }

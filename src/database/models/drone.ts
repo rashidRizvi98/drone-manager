@@ -46,7 +46,7 @@ export class Drone extends Model<IDrone,IDroneAttributes>{
             max: 500
         }
     })
-    weight!: number;
+    weightLimit!: number;
 
     @Column({
         type: DataType.INTEGER,

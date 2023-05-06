@@ -3,7 +3,7 @@ export interface IDrone {
     id: string;
     serialNumber: string;
     model: DroneModelEnum;
-    weight: number;
+    weightLimit: number;
     batteryPercentage: number;
     state: DroneStateEnum;
     distanceToDestination: number

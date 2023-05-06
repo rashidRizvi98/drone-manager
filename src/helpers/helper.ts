@@ -1,6 +1,6 @@
 import { DroneModelEnum } from "../models/drone";
 
-export const getDroneWeight = (droneModel: DroneModelEnum) => {
+export const getDroneWeightLimit = (droneModel: DroneModelEnum) => {
     switch (droneModel) {
         case DroneModelEnum.LIGHTWEIGHT:
             return 200;

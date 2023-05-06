@@ -36,7 +36,7 @@ export const loadMedication: RequestHandler = async (req,res,next) => {
         currentWeightInDrone += (med?.weight! * load.count);
     }
 
-    if (drone.weight < currentWeightInDrone + medication.weight) {
+    if (drone.weightLimit < currentWeightInDrone + medication.weight) {
         return next(new Error("Unable to load the medication, drone has reached the capacity"));
     }
 
