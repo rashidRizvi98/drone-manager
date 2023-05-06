@@ -7,7 +7,7 @@ import { getDroneWeight } from "../helpers/helper";
 import { Medication } from "../database/models/medication";
 import { getPreSignedUrl } from "../middlewares/file-upload";
 import { IMedication } from "../models/medication";
-import { Op Prevent the drone from being in a LOADING state if the battery level is below 25%} from "sequelize";
+import { Op } from "sequelize";
 
 export const registerDrone: RequestHandler = async (req,res,next) => {
     const payload : IDrone = req.body;
