@@ -70,7 +70,8 @@ export class Drone extends Model<IDrone,IDroneAttributes>{
         type: DataType.FLOAT,
         allowNull: false,
         validate: {
-            min: 1
+            min: 1,
+            max: 5
         }
     })
     distanceToDestination!: number;
