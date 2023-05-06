@@ -124,7 +124,7 @@ export const getLoadedMedications: RequestHandler = async (req, res, next) => {
     }));
     let responsePayload: any[] = [];
     drone.loads.forEach(load => {
-        const match = medicationList.find(medication => load.medicationId == medication.id);
+        const match = medicationsWithSignedUrl.find(medication => load.medicationId == medication.id);
 
         responsePayload.push({...match,count: load.count});
     });

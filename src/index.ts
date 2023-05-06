@@ -5,8 +5,9 @@ import droneRouter from './routes/drone';
 import { initializeDatabase } from './database';
 import medicationRouter from './routes/medication';
 import loadRouter from './routes/load';
+import { getLogger } from './helpers/logger';
 
-
+const logger = getLogger('MAIN');
 const app: Express=express()
 
 app.get('/', (req, res) => {
@@ -35,5 +36,5 @@ app.use(
 initializeDatabase();
 
 app.listen(port,()=>{
-    console.log(`SERVER IS RUNNING AT: ${port}`)
+  logger.info(`SERVER IS RUNNING AT: ${port}`);
 });
