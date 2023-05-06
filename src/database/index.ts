@@ -4,6 +4,7 @@ import { dbConfig } from "../config";
 import { createdb } from "pgtools";
 import { Medication } from "./models/medication";
 import { Load } from "./models/load";
+import { initializeDefaultData } from "../helpers/initial-data";
 
 const connection = new Sequelize({
     username: dbConfig.username,
@@ -34,7 +35,13 @@ export const initializeDatabase =async () => {
 
     try {
         await connection.sync({force: false,alter: true});  
-        console.log("SYNCED DRONE MANAGER DB SUCCESSFULLY");      
+        console.log("SYNCED DRONE MANAGER DB SUCCESSFULLY"); 
+        try {
+            await initializeDefaultData();
+            console.log("SUCCESSFULLY INITIALIZED DEFAULT DATA");           
+        } catch (error) {
+            console.log("FAILED TO INITIALIZE DEFAULT DATA: ",error);           
+        }     
     } catch (error) {
         console.log("FAILED TO ESTABLISH DB CONNECTION: ",error);
     }
