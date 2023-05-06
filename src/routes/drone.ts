@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { checkBatteryPercentage, deliver, getLoadableDrones, getLoadedMedications, rechargeDrone, registerDrone, resetDrone } from "../controllers/drone";
+import { droneRegistrationInputValidator } from "../middlewares/drone-input-validator";
 
 const droneRouter = Router();
 
-droneRouter.post("/register",registerDrone);
+droneRouter.post("/register",droneRegistrationInputValidator(),registerDrone);
 
 droneRouter.post("/deliver",deliver);
 

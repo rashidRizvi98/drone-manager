@@ -8,8 +8,20 @@ import { Medication } from "../database/models/medication";
 import { getPreSignedUrl } from "../middlewares/file-upload";
 import { IMedication } from "../models/medication";
 import { Op } from "sequelize";
+import { validationResult } from "express-validator";
+import { getLogger } from "../helpers/logger";
+
+const logger = getLogger("DRONE CONTROLLER")
 
 export const registerDrone: RequestHandler = async (req,res,next) => {
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        logger.debug(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const payload : IDrone = req.body;
     try {
         const [registeredDrone ,created] = await Drone.findOrCreate({
