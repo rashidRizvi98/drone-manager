@@ -2,9 +2,20 @@ import { RequestHandler } from "express";
 import { IMedication } from "../models/medication";
 import { Medication } from "../database/models/medication";
 import { getPreSignedUrl } from "../middlewares/file-upload";
+import { validationResult } from "express-validator";
+import { getLogger } from "../helpers/logger";
 
+const logger = getLogger("MEDICATION CONTROLLER")
 
 export const createMedication: RequestHandler = async (req,res,next) => {
+
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        logger.debug(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const payload : IMedication = req.body;
     try {
         const [medication ,created] = await Medication.findOrCreate({
