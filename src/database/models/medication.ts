@@ -12,9 +12,9 @@ interface IMedicationributes extends Optional<IMedication,'id'> {}
 export class Medication extends Model<IMedication,IMedicationributes>{
 
     @Column({
-        primaryKey: true,
         type: DataType.UUID,
         defaultValue: DataType.UUIDV4,
+        unique: true
     })    
     id!: string;
 
@@ -34,6 +34,7 @@ export class Medication extends Model<IMedication,IMedicationributes>{
     weight!: number;
 
     @Column({
+        primaryKey: true,
         type: DataType.STRING,
         allowNull: false,
         validate: {

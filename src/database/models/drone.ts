@@ -12,18 +12,20 @@ interface IDroneAttributes extends Optional<IDrone,'id'> {}
 export class Drone extends Model<IDrone,IDroneAttributes>{
 
     @Column({
-        primaryKey: true,
         type: DataType.UUID,
         defaultValue: DataType.UUIDV4,
+        unique: true
     })    
     id!: string;
 
     @Column({
+        primaryKey: true,
         type: DataType.STRING,
         allowNull: false,
         validate: {
             len: [1,100]
-        }
+        },
+        unique: true
     })
     serialNumber!: string;
 

@@ -29,10 +29,10 @@ export const loadMedication: RequestHandler = async (req,res,next) => {
         return next(new Error("Please wait until current loading completes"));
     }
 
-    const droneLoad = await Load.findAll({ where: { droneId: drone.id }});
+    const droneLoad = await Load.findAll({ where: { serialNumber: drone.serialNumber }});
     let currentWeightInDrone = 0;
     for (const load of droneLoad) {
-        const med = await Medication.findOne({where: { id: load.medicationId }});
+        const med = await Medication.findOne({where: { code: load.code }});
         currentWeightInDrone += (med?.weight! * load.count);
     }
 
@@ -40,14 +40,14 @@ export const loadMedication: RequestHandler = async (req,res,next) => {
         return next(new Error("Unable to load the medication, drone has reached the capacity"));
     }
 
-    const loadExists = await Load.findOne({where: { droneId: drone?.id,medicationId: medication.id }});
+    const loadExists = await Load.findOne({where: { serialNumber: drone?.serialNumber,code: medication.code }});
     loadDrone(drone.id);
     let load = null;
     if (loadExists) {
        load = await loadExists.update({count: ++loadExists.count})
     
     }else{
-        load = await Load.create({ droneId: drone.id, medicationId: medication.id, count:1 });
+        load = await Load.create({ serialNumber: drone.serialNumber, code: medication.code, count:1 });
     }
 
     return res.status(200)

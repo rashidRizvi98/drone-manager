@@ -69,9 +69,9 @@ export const deliver: RequestHandler = async (req, res, next) => {
 }
 
 export const resetDrone: RequestHandler = async (req,res,next) => {
-    const {droneId} = req.body
-    Drone.update({state: DroneStateEnum.IDLE},{where:{ id: droneId }})
-    Load.destroy({where:{ droneId }});
+    const { serialNumber } = req.body
+    Drone.update({state: DroneStateEnum.IDLE},{where:{ serialNumber }})
+    Load.destroy({where:{ serialNumber }});
     return res.status(200)
     .json({message: "Successfully Reset"});
 }
@@ -112,9 +112,9 @@ export const getLoadedMedications: RequestHandler = async (req, res, next) => {
     if (!drone) {
         return next(new Error("Invalid serial number"));   
     }
-    const medicationIds = drone?.loads.map(load => load.medicationId);
+    const medicationCodes = drone?.loads.map(load => load.code);
 
-    const medicationList = await Medication.findAll({ raw: true, where: { id: medicationIds }});
+    const medicationList = await Medication.findAll({ raw: true, where: { code: medicationCodes }});
     let medicationsWithSignedUrl: IMedication[] = [];
     await Promise.all(medicationList.map(async(medication) =>{
         medicationsWithSignedUrl.push({
@@ -124,7 +124,7 @@ export const getLoadedMedications: RequestHandler = async (req, res, next) => {
     }));
     let responsePayload: any[] = [];
     drone.loads.forEach(load => {
-        const match = medicationsWithSignedUrl.find(medication => load.medicationId == medication.id);
+        const match = medicationsWithSignedUrl.find(medication => load.code == medication.code);
 
         responsePayload.push({...match,count: load.count});
     });
@@ -143,11 +143,11 @@ export const getLoadableDrones: RequestHandler = async (req,res,next) => {
     for (const drone of drones) {
         let weightInDrone = 0
         await Promise.all(drone.loads.map(async( load) =>{
-            const med = await Medication.findOne({where: { id: load.medicationId }});
+            const med = await Medication.findOne({where: { code: load.code }});
             weightInDrone += (med?.weight! * load.count);
             
         }));
-        console.log("weightInDrone")
+
         if (weightInDrone != drone.weight) {
                 dronesWithSpace.push(drone);
         }            

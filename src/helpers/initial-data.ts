@@ -4,8 +4,8 @@ import { DroneModelEnum, DroneStateEnum } from "../models/drone"
 import { getDroneWeight } from "./helper"
 
 export const initializeDefaultData =async () => {
-   await Drone.bulkCreate(initialDrones,{ updateOnDuplicate: ['serialNumber'] });
-   await Medication.bulkCreate(initialMedications,{ updateOnDuplicate: ['code'] });
+   await Drone.bulkCreate(initialDrones,{ ignoreDuplicates: true, });
+   await Medication.bulkCreate(initialMedications,{ ignoreDuplicates: true });
 }
 
 
