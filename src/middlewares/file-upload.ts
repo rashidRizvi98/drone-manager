@@ -25,7 +25,7 @@ export const upload = multer({
              cb(null, { fieldName: file.fieldname });
          },
          key: function (req, file, cb) {
-             cb(null, `${nanoid()}-${file.originalname}`)
+             cb(null, file.originalname)
          }
      })
  })
