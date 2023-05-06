@@ -1,6 +1,8 @@
 import { body } from "express-validator"
 import { enumToArray } from "../helpers/helper"
-import { DroneModelEnum } from "../models/drone"
+import { DroneModelEnum, DroneStateEnum } from "../models/drone"
+import { NextFunction, Request, Response } from "express";
+import { Drone } from "../database/models/drone";
 
 
 export const droneRegistrationInputValidator = ()=> {
@@ -32,3 +34,35 @@ export const droneRegistrationInputValidator = ()=> {
       .withMessage('Distance to destination is required'),
   ];
 };
+
+export const validateDroneForDelivery = async (req: Request, res: Response, next: NextFunction) => {
+  const { serialNumber } = req.body;
+
+  try {
+    const drone = await Drone.findOne({where: { serialNumber: serialNumber }});
+    if (!drone) {
+      return res.status(400).json({ error: 'Invalid serial number' });
+    }
+  
+    if (drone.state == DroneStateEnum.DELIVERING) {
+      return res.status(400).json({ error: 'On a delivery, please wait.' });
+    }
+  
+    if (drone.state == DroneStateEnum.RETURNING) {
+      return res.status(400).json({ error: 'Returning from delivery, please wait.' });
+    }
+  
+    if(drone?.state != DroneStateEnum.LOADED)
+      return res.status(400).json({ error: 'Drone is not Loaded' });
+  
+    req.body.drone = drone;
+    next();
+    
+  } catch (error) {
+    return res.status(500).json({ error: 'Something went wrong' });
+  }
+
+
+
+
+}
