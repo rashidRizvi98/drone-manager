@@ -17,6 +17,6 @@ export const deliverLoad = async (drone: Drone)=> {
 
 export const loadDrone = async ( droneId: string) => {
     await Drone.update({ state: DroneStateEnum.LOADING },{ where:{ id: droneId }});
-    await setTimeout(15000);
+    await setTimeout(5000);
     await Drone.update({ state: DroneStateEnum.LOADED },{ where:{ id: droneId }});
 }
