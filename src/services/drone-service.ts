@@ -5,6 +5,10 @@ import { Load } from "../database/models/load";
 import { getDroneWeightLimit } from "../helpers/helper";
 import { connection } from "../database";
 import { getLogger } from "../helpers/logger";
+import { Medication } from "../database/models/medication";
+import { IMedication } from "../models/medication";
+import { getPreSignedUrl } from "../middlewares/file-upload";
+import { Op } from "sequelize";
 
 const logger = getLogger("DRONE SERVICE")
 
@@ -40,9 +44,8 @@ const deliverLoad = async (drone: Drone)=> {
     });
    } catch (error) {
         logger.error(error);
-   }
-
-    
+        throw error;
+   }    
 }
 
 const loadDrone = async ( droneId: string) => {
@@ -55,11 +58,101 @@ const loadDrone = async ( droneId: string) => {
         });
     } catch (error) {
         logger.error(error);
+        throw error;
     }
+}
+
+const resetDrone = async ( serialNumber: string) => {
+    try {
+        await connection.transaction(async(t) => {
+            await Drone.update({state: DroneStateEnum.IDLE},{where:{ serialNumber }})
+            await Load.destroy({where:{ serialNumber }});
+        });
+    } catch (error) {
+        logger.error(error);
+        throw error;
+    }
+}
+
+const rechargeDrone = async (serialNumber: string) => {
+    const drone = await Drone.findOne({where: { serialNumber }});
+
+    if (!drone) {
+        throw new Error("Invalid serial number");   
+    }
+    try {
+        await drone.update({batteryPercentage: 100},{where:{ serialNumber }});          
+    } catch (error) {
+        logger.error(error);
+        throw error;
+    }
+};
+
+const getBatteryPercentage = async (serialNumber: string) => {
+    const drone = await Drone.findOne({where: { serialNumber }});
+
+    if (!drone) {
+        throw new Error("Invalid serial number");   
+    }
+    return drone.batteryPercentage;
+}
+
+const getLoadedMedicationsInDrone = async (serialNumber: string) => {
+    const drone = await Drone.findOne({
+        where: { serialNumber },
+        include: Load        
+    });
+    if (!drone) {
+        throw new Error("Invalid serial number");   
+    }
+    const medicationCodes = drone?.loads.map(load => load.code);
+
+    const medicationList = await Medication.findAll({ raw: true, where: { code: medicationCodes }});
+    let medicationsWithSignedUrl: IMedication[] = [];
+    await Promise.all(medicationList.map(async(medication) =>{
+        medicationsWithSignedUrl.push({
+            ...medication,
+            image: await getPreSignedUrl(medication.image)
+        });
+    }));
+    let responsePayload: any[] = [];
+    drone.loads.forEach(load => {
+        const match = medicationsWithSignedUrl.find(medication => load.code == medication.code);
+
+        responsePayload.push({...match,count: load.count});
+    });
+    return responsePayload;
+}
+
+const getDronesAvailableForLoading = async () => {
+    const drones = await Drone.findAll({
+        include: Load,
+        where: { state: { [Op.in] : [DroneStateEnum.IDLE,DroneStateEnum.LOADED]},
+        batteryPercentage: { [Op.gte]: 25 }}});
+
+    let dronesWithSpace = [];
+    for (const drone of drones) {
+        let weightInDrone = 0
+        await Promise.all(drone.loads.map(async( load) =>{
+            const med = await Medication.findOne({where: { code: load.code }});
+            weightInDrone += (med?.weight! * load.count);
+            
+        }));
+
+        if (weightInDrone != drone.weightLimit) {
+                dronesWithSpace.push(drone);
+        }            
+    }
+    return dronesWithSpace;
 }
 
 export default { registerDrone,
                  findAllDrones,
                  deliverLoad,
-                 loadDrone    
+                 loadDrone,
+                 resetDrone,
+                 rechargeDrone,
+                 getBatteryPercentage,
+                 getLoadedMedicationsInDrone,
+                 getDronesAvailableForLoading    
                 }
