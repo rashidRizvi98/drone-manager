@@ -7,7 +7,7 @@ import { Load } from "./models/load";
 import { initializeDefaultData } from "../helpers/initial-data";
 import { batteryLevelCron } from "../helpers/battery-level.cron";
 
-const connection = new Sequelize({
+export const connection = new Sequelize({
     username: dbConfig.username,
     password: dbConfig.password,
     host: dbConfig.host,

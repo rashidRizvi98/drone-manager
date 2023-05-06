@@ -3,7 +3,7 @@ import { Drone } from "../database/models/drone";
 import { DroneStateEnum, IDrone } from "../models/drone";
 import { ILoad } from "../models/load";
 import { Load } from "../database/models/load";
-import { loadDrone } from "../services/drone";
+import droneService from "../services/drone-service";
 import { Medication } from "../database/models/medication";
 
 export const loadMedication: RequestHandler = async (req,res,next) => {
@@ -41,7 +41,7 @@ export const loadMedication: RequestHandler = async (req,res,next) => {
     }
 
     const loadExists = await Load.findOne({where: { serialNumber: drone?.serialNumber,code: medication.code }});
-    loadDrone(drone.id);
+    droneService.loadDrone(drone.id);
     let load = null;
     if (loadExists) {
        load = await loadExists.update({count: ++loadExists.count})

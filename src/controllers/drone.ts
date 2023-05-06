@@ -1,7 +1,6 @@
 import { RequestHandler } from "express";
 import { Drone } from "../database/models/drone";
 import { DroneStateEnum, IDrone } from "../models/drone";
-import { deliverLoad } from "../services/drone";
 import { Load } from "../database/models/load";
 import { getDroneWeightLimit } from "../helpers/helper";
 import { Medication } from "../database/models/medication";
@@ -10,6 +9,7 @@ import { IMedication } from "../models/medication";
 import { Op } from "sequelize";
 import { validationResult } from "express-validator";
 import { getLogger } from "../helpers/logger";
+import droneService from "../services/drone-service";
 
 const logger = getLogger("DRONE CONTROLLER")
 
@@ -24,25 +24,14 @@ export const registerDrone: RequestHandler = async (req,res,next) => {
 
     const payload : IDrone = req.body;
     try {
-        const [registeredDrone ,created] = await Drone.findOrCreate({
-            where: { serialNumber: payload.serialNumber },
-            defaults: {
-                serialNumber: payload.serialNumber,
-                batteryPercentage: payload?.batteryPercentage,
-                weightLimit: getDroneWeightLimit(payload?.model),
-                model: payload?.model,
-                state: payload?.state,
-                distanceToDestination: payload.distanceToDestination
-            }
-        });
-    
+        const [registeredDrone ,created] = await droneService.registerDrone(payload);
         if (created) {
             return res.status(201)
             .json({message: "Drone Registered Successfully", data: registeredDrone});        
         }else{
             return res.status(200)
             .json({message: "Drone has been alrady registered", data: registeredDrone});
-        }        
+        }
     } catch (error) {
         return next(error); 
     }
@@ -50,34 +39,28 @@ export const registerDrone: RequestHandler = async (req,res,next) => {
 }
 
 export const findAllDrones: RequestHandler = async (req, res, next) => {
-    const drones = await Drone.findAll();
+    
+    try {
+        const drones = await droneService.findAllDrones();
+        return res.status(200)
+        .json({message: "Success",data: drones});        
+    } catch (error) {
+        return next(error);    
+    }
 
-    return res.status(200)
-    .json({message: "Success",data: drones});
 }
 
 export const deliver: RequestHandler = async (req, res, next) => {
-    const drone = await Drone.findOne({where: { serialNumber: req.body.serialNumber }});
+    const { drone } = req.body;
 
-    if (!drone) {
-        return next(new Error("Invalid serial number"));   
+    try {
+        droneService.deliverLoad(drone);        
+        return res.status(200)
+        .json({message: "Delivery in progress..."});
+    } catch (error) {
+        return next(error);
     }
 
-    if (drone.state == DroneStateEnum.DELIVERING) {
-        return next(new Error("On a delivery, please wait."));        
-    }
-
-    if (drone.state == DroneStateEnum.RETURNING) {
-        return next(new Error("Returning from delivery, please wait."));        
-    }
-
-    if(drone?.state != DroneStateEnum.LOADED)
-        return next(new Error("Drone is not Loaded"));
-
-    await drone.update({state: DroneStateEnum.DELIVERING})
-    deliverLoad(drone);
-    return res.status(200)
-    .json({message: "Delivery in progress..."});
 }
 
 export const resetDrone: RequestHandler = async (req,res,next) => {
