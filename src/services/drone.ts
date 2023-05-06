@@ -5,13 +5,13 @@ import { Load } from "../database/models/load";
 
 
 export const deliverLoad = async (drone: Drone)=> {
-    await setTimeout(15000);
-    await Drone.update({ state: DroneStateEnum.DELIVERED,batteryPercentage: drone.batteryPercentage - 20},{ where: {id: drone.id }});
+    await setTimeout(10000);
+    await Drone.update({ state: DroneStateEnum.DELIVERED,batteryPercentage: drone.batteryPercentage - (drone.distanceToDestination *4)},{ where: {id: drone.id }});
     await Load.destroy({ where:{droneId: drone.id}});
     await Drone.update({ state: DroneStateEnum.RETURNING},{where: {id: drone.id }});
-    await setTimeout(15000);
+    await setTimeout(10000);
     const returnedDrone = await Drone.findByPk(drone.id);
-    await Drone.update({state: DroneStateEnum.IDLE,batteryPercentage: returnedDrone?.batteryPercentage! - 20},{where: {id: drone.id }});
+    await Drone.update({state: DroneStateEnum.IDLE,batteryPercentage: returnedDrone?.batteryPercentage! - (drone.distanceToDestination *4)},{where: {id: drone.id }});
     
 }
 

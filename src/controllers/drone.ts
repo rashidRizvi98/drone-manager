@@ -60,7 +60,7 @@ export const deliver: RequestHandler = async (req, res, next) => {
     }
 
     if(drone?.state != DroneStateEnum.LOADED)
-    return next(new Error("Drone is not Loaded"));
+        return next(new Error("Drone is not Loaded"));
 
     await drone.update({state: DroneStateEnum.DELIVERING})
     deliverLoad(drone);
