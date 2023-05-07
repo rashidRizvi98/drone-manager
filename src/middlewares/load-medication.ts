@@ -12,6 +12,18 @@ export const validateToLoadMedication = async (req: Request, res: Response, next
         if (!drone) {
             return res.status(400).json({ message: 'Invalid serial number' });
         }
+
+        if (drone.state == DroneStateEnum.DELIVERING) {
+            return res.status(400).json({ error: 'On a delivery, please wait.' });
+        }
+      
+        if (drone.state == DroneStateEnum.DELIVERED) {
+          return res.status(400).json({ error: 'Unloading a delivery, please wait.' });
+        }
+    
+        if (drone.state == DroneStateEnum.RETURNING) {
+          return res.status(400).json({ error: 'Returning from delivery, please wait.' });
+        }
     
         const medication = await Medication.findOne({ where:{ code }});
     
