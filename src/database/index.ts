@@ -7,6 +7,9 @@ import { Load } from "./models/load";
 import { initializeDefaultData } from "../helpers/initial-data";
 import { batteryLevelCron } from "../helpers/battery-level.cron";
 import { BatteryLevelLog } from "./models/battery-level-log";
+import { getLogger } from "../helpers/logger";
+
+const logger = getLogger('DATABASE');
 
 export const connection = new Sequelize({
     username: dbConfig.username,
@@ -36,17 +39,17 @@ export const initializeDatabase =async () => {
     }
 
     try {
-        await connection.sync({force: false,alter: true});  
-        console.log("SYNCED DRONE MANAGER DB SUCCESSFULLY"); 
+        await connection.sync({force: false,alter: true});
+        logger.info("SYNCED DRONE MANAGER DB SUCCESSFULLY");  
         try {
             await initializeDefaultData();
             batteryLevelCron();
-            console.log("SUCCESSFULLY INITIALIZED DEFAULT DATA");           
+            logger.info("SUCCESSFULLY INITIALIZED DEFAULT DATA");
         } catch (error) {
-            console.log("FAILED TO INITIALIZE DEFAULT DATA: ",error);           
+            logger.error("FAILED TO INITIALIZE DEFAULT DATA: ",error);
         }     
     } catch (error) {
-        console.log("FAILED TO ESTABLISH DB CONNECTION: ",error);
+        logger.error("FAILED TO ESTABLISH DB CONNECTION: ",error);
     }
 
 

@@ -1,13 +1,11 @@
 import multer from 'multer';
 import multerS3 from 'multer-s3'
-import path from 'path';
-//import { nanoid } from 'nanoid'
-import aws from "aws-sdk";
-import fs  from 'fs';
 import { awsConfig } from '../config';
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { nanoid } from 'nanoid';
+import { getLogger } from '../helpers/logger';
+
+const logger = getLogger('FILE-UPLOAD');
 
 const s3Client = new S3Client({
     region: 'us-east-1',
@@ -34,6 +32,7 @@ export const upload = multer({
  export const getPreSignedUrl = async(key: string) => {
     const command = new GetObjectCommand({Bucket: awsConfig.bucket_name, Key: key });
     const url = await getSignedUrl(s3Client, command, { expiresIn: 60 * 60 });
-    console.log('Presigned URL: ', url);
+    logger
+    logger.info('Presigned URL: ', url);
     return url;
  }
