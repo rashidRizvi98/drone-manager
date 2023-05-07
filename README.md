@@ -53,7 +53,7 @@ Now the application is available at http://localhost:5000
 * Different type of / Same type of medication can be loaded multiple times until it reaches drone capacity
 
 * For each 1km, 4% of battery will be consumed. 
-eg: battery level of a fully charged drone, after 5km distance delivery(up and down) 100- 10 * 4 = 60%
+eg: battery level of a fully charged drone, after 5km distance delivery(up and down) 100 - 10 * 4 = 60%
 
 * Drone will be in 'LOADED' state, if it has been loaded with atleast one medication
 
