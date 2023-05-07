@@ -7,6 +7,7 @@ import medicationRouter from './routes/medication';
 import loadRouter from './routes/load';
 import { getLogger } from './helpers/logger';
 import { HttpError } from './helpers/custom-error';
+import logRouter from './routes/battery-level-log';
 
 const logger = getLogger('MAIN');
 export const app: Express=express()
@@ -22,6 +23,8 @@ app.use("/drones",droneRouter);
 app.use("/medications",medicationRouter);
 
 app.use("/load",loadRouter);
+
+app.use("/logs",logRouter);
 
 app.use(
   (

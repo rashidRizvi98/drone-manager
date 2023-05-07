@@ -16,3 +16,10 @@ export const getDroneWeightLimit = (droneModel: DroneModelEnum) => {
 export const enumToArray = (enumm: any) => {
     return Object.keys(enumm).map(key => enumm[key]);
 }
+
+export const getPagination = (page: number, size: number) => {
+    const limit = size ? size : 5;
+    const offset = page ? page * limit : 0;
+  
+    return { limit, offset };
+  };
