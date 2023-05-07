@@ -55,7 +55,10 @@ export const validateDroneForDelivery = async (req: Request, res: Response, next
     if (drone.state == DroneStateEnum.RETURNING) {
       return res.status(400).json({ error: 'Returning from delivery, please wait.' });
     }
-  
+
+    if(drone?.state == DroneStateEnum.LOADING)
+    return res.status(400).json({ error: 'Drone is being Loaded. Please wait.' });
+    
     if(drone?.state != DroneStateEnum.LOADED)
       return res.status(400).json({ error: 'Drone is not Loaded' });
   
