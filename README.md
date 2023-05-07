@@ -170,7 +170,7 @@ GET http://localhost:5000/logs/drone-1?page=1&size=50
 
 test cases has been written for following, using jest and supertest.
 
-* check drone batter level
+* check drone battery level
 * load drones with medication(validate drone availability, battery percentage etc.)
 
 to run execute the tests please run
