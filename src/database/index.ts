@@ -6,6 +6,7 @@ import { Medication } from "./models/medication";
 import { Load } from "./models/load";
 import { initializeDefaultData } from "../helpers/initial-data";
 import { batteryLevelCron } from "../helpers/battery-level.cron";
+import { BatteryLevelLog } from "./models/battery-level-log";
 
 export const connection = new Sequelize({
     username: dbConfig.username,
@@ -15,7 +16,7 @@ export const connection = new Sequelize({
     dialect: "postgres",
     database: "drone-manager",
     logging: false,
-    models: [Drone,Medication,Load]
+    models: [Drone,Medication,Load,BatteryLevelLog]
 })
 
 export const createDatabase = async (dbName: string) => {
