@@ -6,9 +6,10 @@ import { initializeDatabase } from './database';
 import medicationRouter from './routes/medication';
 import loadRouter from './routes/load';
 import { getLogger } from './helpers/logger';
+import { HttpError } from './helpers/custom-error';
 
 const logger = getLogger('MAIN');
-const app: Express=express()
+export const app: Express=express()
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
@@ -29,7 +30,11 @@ app.use(
     res: express.Response,
     next: express.NextFunction
   ) => {
-    res.status(500).json({message: err.message});
+    if (err instanceof HttpError) {
+      res.status(err.statusCode).json({ message: err.message });
+    } else {
+      res.status(500).json({ message: 'Internal server error' });
+    }
   }
 );
 

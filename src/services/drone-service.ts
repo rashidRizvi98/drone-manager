@@ -9,6 +9,7 @@ import { Medication } from "../database/models/medication";
 import { IMedication } from "../models/medication";
 import { getPreSignedUrl } from "../middlewares/file-upload";
 import { Op } from "sequelize";
+import { HttpError } from "../helpers/custom-error";
 
 const logger = getLogger("DRONE SERVICE")
 
@@ -92,7 +93,7 @@ const getBatteryPercentage = async (serialNumber: string) => {
     const drone = await Drone.findOne({where: { serialNumber }});
 
     if (!drone) {
-        throw new Error("Invalid serial number");   
+        throw new HttpError(404,"Invalid serial number");   
     }
     return drone.batteryPercentage;
 }

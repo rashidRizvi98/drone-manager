@@ -1,6 +1,7 @@
 import { Drone } from "../database/models/drone";
 import { Load } from "../database/models/load";
 import { Medication } from "../database/models/medication";
+import { HttpError } from "../helpers/custom-error";
 import droneService from "./drone-service";
 
 const loadMedicationToDrone = async (drone: Drone, medication: Medication) => {
@@ -14,7 +15,7 @@ const loadMedicationToDrone = async (drone: Drone, medication: Medication) => {
     }
 
     if (drone.weightLimit < currentWeightInDrone + medication.weight) {
-        throw new Error("Unable to load the medication, drone has reached the capacity");
+        throw new HttpError(400,"Unable to load the medication, drone has reached the capacity");
     }
 
     const loadExists = await Load.findOne({where: { serialNumber: drone?.serialNumber,code: medication.code }});
