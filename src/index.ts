@@ -42,7 +42,7 @@ app.use(
 );
 
 initializeDatabase();
-
+if (process.env.NODE_ENV !== 'test') {
 app.listen(port,()=>{
   logger.info(`SERVER IS RUNNING AT: ${port}`);
-});
+});}

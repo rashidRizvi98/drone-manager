@@ -1,4 +1,4 @@
-export const port = process.env.PORT;
+export const port = process.env.PORT || 4000;
 
 export const dbConfig = {
     username: "postgres",
