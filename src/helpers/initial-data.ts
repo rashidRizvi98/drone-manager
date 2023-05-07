@@ -26,7 +26,33 @@ const initialDrones = [
         batteryPercentage: 100,
         distanceToDestination:5,
         state: DroneStateEnum.IDLE  
-    }
+    },
+    {
+        serialNumber: "drone-1-test",
+        model: DroneModelEnum.LIGHTWEIGHT,
+        weightLimit: getDroneWeightLimit(DroneModelEnum.LIGHTWEIGHT),
+        batteryPercentage: 100,
+        distanceToDestination:5,
+        state: DroneStateEnum.IDLE
+    
+    },
+    {
+        serialNumber: "drone-2-test",
+        model: DroneModelEnum.HEAVYWEIGHT,
+        weightLimit: getDroneWeightLimit(DroneModelEnum.HEAVYWEIGHT),
+        batteryPercentage: 100,
+        distanceToDestination:5,
+        state: DroneStateEnum.IDLE  
+    },
+    {
+        serialNumber: "drone-3-test",
+        model: DroneModelEnum.LIGHTWEIGHT,
+        weightLimit: getDroneWeightLimit(DroneModelEnum.LIGHTWEIGHT),
+        batteryPercentage: 24,
+        distanceToDestination:5,
+        state: DroneStateEnum.IDLE
+    
+    },
 ];
 
 const initialMedications = [
