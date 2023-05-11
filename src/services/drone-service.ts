@@ -68,8 +68,8 @@ const resetDrone = async ( serialNumber: string) => {
         throw new HttpError(404,"Invalid serial number");   
     }
     try {
-            await Drone.update({state: DroneStateEnum.IDLE},{where:{ serialNumber }})
-            await Load.destroy({where:{ serialNumber }});
+            await Drone.update({ state: DroneStateEnum.IDLE, batteryPercentage: 100 },{ where:{ serialNumber }});
+            await Load.destroy({ where:{ serialNumber }});
     } catch (error) {
         logger.error(error);
         throw error;
