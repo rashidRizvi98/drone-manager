@@ -33,7 +33,6 @@ const findAllDrones = async () => {
 
 const deliverLoad = async (drone: Drone)=> {
    try {
-    await connection.transaction(async ()=> {
         await drone.update({state: DroneStateEnum.DELIVERING})
         await setTimeout(drone.distanceToDestination * 2000);
         await Drone.update({ state: DroneStateEnum.DELIVERED,batteryPercentage: drone.batteryPercentage - (drone.distanceToDestination *4)},{ where: {id: drone.id }});
@@ -43,7 +42,6 @@ const deliverLoad = async (drone: Drone)=> {
         await setTimeout(drone.distanceToDestination * 2000);
         const returnedDrone = await Drone.findByPk(drone.serialNumber);
         await Drone.update({state: DroneStateEnum.IDLE,batteryPercentage: returnedDrone?.batteryPercentage! - (drone.distanceToDestination *4)},{where: {id: drone.id }});
-    });
    } catch (error) {
         logger.error(error);
         throw error;
@@ -52,12 +50,10 @@ const deliverLoad = async (drone: Drone)=> {
 
 const loadDrone = async ( droneId: string) => {
     try {
-        await connection.transaction(async()=>{
             await Drone.update({ state: DroneStateEnum.LOADING },{ where:{ id: droneId }});
             await setTimeout(5000);
             await Drone.update({ state: DroneStateEnum.LOADED },{ where:{ id: droneId }});
         
-        });
     } catch (error) {
         logger.error(error);
         throw error;
@@ -72,10 +68,8 @@ const resetDrone = async ( serialNumber: string) => {
         throw new HttpError(404,"Invalid serial number");   
     }
     try {
-        await connection.transaction(async(t) => {
             await Drone.update({state: DroneStateEnum.IDLE},{where:{ serialNumber }})
             await Load.destroy({where:{ serialNumber }});
-        });
     } catch (error) {
         logger.error(error);
         throw error;
